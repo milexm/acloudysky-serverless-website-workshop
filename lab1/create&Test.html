@@ -1,0 +1,100 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+  <title>Create and Testing the Site</title>
+  <meta name="description" content="website description" />
+  <meta name="keywords" content="website keywords, website keywords" />
+  <meta http-equiv="content-type" content="text/html; charset=windows-1252" />
+  <link rel="stylesheet" type="text/css" href="cs/style.css" />
+</head>
+
+<body>
+  <div id="main">
+    <div id="header">
+      <div id="logo">
+        <div id="logo_text">
+          <!-- class="logo_colour", allows you to change the colour of the text -->
+          <h1><a href="index.html">Acloudysky <span class="logo_colour">S3 Static Web Site</span></a></h1>
+          <h2>Live Demo of a static web site "hosted" on AWS S3.</h2>
+        </div>
+      </div>
+      <div id="menubar">
+        <ul id="menu">
+          <!-- put class="selected" in the li tag for the selected page - to highlight which page you're on -->
+          <li class="selected"><a href="index.html">Home</a></li>
+          <li><a href="examples.html">Examples</a></li>
+          <li><a href="contact.html">Contact Us</a></li>
+        </ul>
+      </div>
+    </div>
+    
+    <div id="site_content">
+     
+	  <!--  Side bar  -->  	
+	 <div id="sidebar_container">
+	
+        <div class="sidebar">
+          <div class="sidebar_top"></div>
+          <div class="sidebar_item">
+            <!-- insert your sidebar items here -->
+            <h3>Latest News</h3>
+            <h4>Website Launch</h4>
+            <h5>February 1st, 2017</h5>
+            <p>The site has been designed using a publicly available template. 
+            For more information, see <a href="http://www.html5webtemplates.co.uk/" target="_blank">Free HTML5 Templates</a></p>
+          </div>
+          <div class="sidebar_base"></div>
+        </div>
+        
+        <div class="sidebar">
+          <div class="sidebar_top"></div>
+          <div class="sidebar_item">
+            <h3>Useful Links</h3>
+            <ul>
+              <li><a href="http://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteHosting.html" target="_blank">Hosting a Static Website on Amazon S3</a></li>
+              <li><a href="http://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteEndpoints.html" target="_blank">Website Endpoints</a></li>
+              <li><a href="http://docs.aws.amazon.com/AmazonS3/latest/dev/HowDoIWebsiteConfiguration.html" target="_blank">Configure a Bucket for Website Hosting</a></li>
+              <li><a href="http://docs.aws.amazon.com/AmazonS3/latest/dev/hosting-websites-on-s3-examples.html" target="_blank">Example Walkthroughs - Hosting Websites On Amazon S3</a></li>
+            </ul>
+          </div>
+          
+        </div>  
+      </div>
+      
+      <div id="content">
+      <h1>Creating and Testing the Site</h1>
+       
+   		<h2>Creating the Site</h2> 
+   		These are the main steps to create the site:
+    	<ul>
+			<li>Login into the AWS dashboard and select the S3 service</li>
+			<li>Create a bucket</li>
+			<li>Enable static web site hosting on the bucket</li>
+			<li>Define file name for the home page, usually index.html</li>	
+			<li>Add bucket policy to allow public access to the site. <br/>
+			<span style="background-color:yellow; color:red; font-weight:bold">
+			WARNING. This is a public site, so do not store any private information.</span> </li>
+			<li>Upload the site files to the bucket</li> 
+			
+		 </ul>  
+		 <h2>Testing the Site</h2> 
+		 	Test the website by entering a URL in the browser simialr to the following:
+			<span style="background-color:yellow">http://bucketname.s3-website-us-west-2.amazonaws.com/index.html </span> <br/>
+			Notice that when you configure a bucket for web site hosting, the web site is available via 
+			the region-specific web site endpoint. 	For more informations, see 
+			<a href="http://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteEndpoints.html" target="_blank">Website Endpoints</a>
+		 
+		 Let's take a pick of how this website structure loooks like.    
+		 <img src="images/acloudysky.jpg" alt="website structure"/>
+   
+      </div>
+    </div>
+     <div id="content_footer"></div>
+    <div id="footer">
+      <p><a href="index.html">Home</a> | <a href="examples.html">Examples</a> | <a href="contact.html">Contact Us</a></p>
+      <p><a href="http://validator.w3.org/check?uri=referer">HTML5 Validation</a> | <a href="http://jigsaw.w3.org/css-validator/check/referer">CSS Validator</a> | <a href="http://www.html5webtemplates.co.uk" target="_blank">design from HTML5webtemplates.co.uk</a></p>
+    </div>
+  </div>
+</body>
+</html>

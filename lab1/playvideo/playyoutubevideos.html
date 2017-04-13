@@ -1,0 +1,213 @@
+<!DOCTYPE html> 
+<html> 
+<head>
+	<title>Play Video</title>
+   	<link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
+   	<link rel="stylesheet" type="text/css" href="../cs/mystyle.css" />
+   	<script type='text/javascript' src='../js/utilities.js'></script>
+   	<script type='text/javascript' src='http://www.youtube.com/iframe_api'></script>
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+ 
+<script>
+	
+	var jsonObj;
+	var slideIndex = 0;
+	
+	var player;
+	
+	$(document).ready(function(){
+	
+		loadCsvFile('playvideo/videos.csv');
+		
+		
+	});
+	
+	/*
+	 * Loads the CSV file that contains the album data.
+	 * Then transforms the data from CSV to JSON format.
+	 * Notice the function makes an XMLHttpRequest Ajax call. 
+	 * This is to allow the CSV file access that otherwise it would be
+	 * denied for security reasons.
+	 * Also the call is asynchronous but the function waits for the
+	 * response to proceed. 
+	 * Finally, the XMLHttpRequest can only be made from a web server local or remote.
+	 * in other words the protocol used is http and not file (that is not allowed).
+	 * For more information, see http://www.w3schools.com/xml/dom_httprequest.asp. 
+	 * Args 
+	 * file - The CSV 	<script>file path 
+	 ***/
+	function loadCsvFile(file) {
+		
+		webPath = getWebPath();
+		
+		// Build the file path.
+		filePath = webPath + file;
+		
+		// Create an XMLHttpRequest object
+	  	var xhttp = new XMLHttpRequest();
+	  	// Get the specified file making an asynchronous request.
+	  	xhttp.open("GET", filePath, true);
+	  	// Send the request to the server. 
+	  	xhttp.send();
+	  	
+	  	// Perform call back function after OK status is returned.
+	  	xhttp.onreadystatechange = function() {
+	    	if (this.readyState == 4 && this.status == 200) {
+	    		// Transform CSV to JSON format.
+	    		var jsonXfm =  csvJSON(this.responseText);
+	    		// Get the JSON object.
+	      	jsonObj = JSON.parse(jsonXfm);
+	      	
+	      	var bkgd = "bkgparams " + jsonObj[0].Background;
+   			$("body").removeAttr("class");
+    			$("body").addClass(bkgd);
+
+  		    // Assign default sound based on the default selection value.
+   			var videoPath =  jsonObj[0].Url;
+   			var plyrId = document.getElementById('playerId'); 
+   			plyrId.src = videoPath;
+   			
+	    	}
+	  	};
+	  	
+	}
+	
+	
+
+	/*
+    * Event handler that processes the selection change.
+    * Loads the selected video.    
+    ***/
+	function onChangeEventHandler(value){
+
+		var videoFound = false;
+		// alert(value);
+	
+		for (var i=0; i <= jsonObj.length - 1; i++ )	{
+			if (jsonObj[i].Video == value) {
+				var bkgd = "bkgparams " + jsonObj[i].Background;
+	   			$("body").removeAttr("class");
+	    			$("body").addClass(bkgd);
+	
+	  			// Select new video.
+	   			var videoPath =  jsonObj[i].Url;
+	   			var plyrId = document.getElementById('playerId'); 
+	   			plyrId.src = videoPath;	
+	   			videoFound = true;	
+	   			
+				break;		
+			}
+			
+		}
+		if (!videoFound) {
+			alert("Video: " + value + " not found.");
+		}
+	}
+	
+	/*
+	 * Page load event handler. 
+	 ***/
+	function onLoadEventHandler() {
+	
+		// TBD
+  		
+	}
+	
+	/*
+	 * Transform the content of the passed CSV file into JSON format.
+	 * Args
+	 * csvData - The CSV data to transform.
+	 * Return
+	 * The data as a JSON string. 
+	 ***/
+	function csvJSON(csvData){
+	
+	  var lines=csvData.split("\n");
+	
+	  var result = [];
+	
+	  var headers=lines[0].split(",");
+	
+	  for(var i=1;i<lines.length;i++){
+	
+		  var obj = {};
+		  var currentline=lines[i].split(",");
+	
+		  for(var j=0;j<headers.length;j++){
+			  obj[headers[j]] = currentline[j];
+		  }
+	
+		  result.push(obj);
+	
+	  }
+	  
+	  // Return result as a JSON string. 
+	  return JSON.stringify(result); 
+	}      
+
+
+/*** Player functions ***/
+	/*
+	 * Creates a player object and attach to it an onPlayerReady
+	 * event handler.
+	 * The Youtube API calls this function when the video player is ready.
+	 ***/
+	function onYouTubeIframeAPIReady(){
+		// alert("called onYouTubeIframeAPIReady");
+		// Create the player object from the iFrame in the page. 
+	 	player=new YT.Player('playerId',{events:{onReady:onPlayerReady}});
+	}
+    
+   /* OnReady event handler.
+    * Sets the initial player audio volume.
+    ***/
+   function onPlayerReady(event){
+    	// alert("called onPlayerReady");
+    	// player.mute();
+		// Set the player volume default value (0 to 100).    	
+    	player.setVolume(10);
+    	
+    }
+      
+  /* Slider change event handler.playerFound 
+  	 * Sets the youtube audio volume to the selected value.
+    * Args 
+    * value the new audio volume (from 0 to 100).
+    ***/ 
+	function onChangeAudioVolume(value)  {
+		// alert("selected volume " + value);
+		player.setVolume(value);
+	}	
+	
+</script>
+
+
+
+</head>
+
+<body onload="onLoadEventHandler()"> 
+
+<div class="w3-content w3-center" style="width:100%; padding-left:80px; padding-top:0%">
+
+	<div class="w3-panel  w3-pale-blue" style="font-weight:bold;" id="captionId">
+
+		<div class="w3-text-blue" style="font-weight:bold; font-size:11px;" id="headerId">
+			<a href="../examples.html" style="text-decoration: none; display:inline; float:left">&lt;&lt; Examples</a>	
+			<select id="mySelect" style="float:right" onchange="onChangeEventHandler(value)">
+			  <option value="italyfolk_music">Italy Folk Music</option>
+			  <option value="firstnation_music">First Nation Sound</option>
+			  <option value="countrymusic">Highway Men</option>
+			  <option value="carnevale">Carnevale in Venice</option>
+			</select>
+		</div>	
+		
+ 	</div>
+ 	
+ 	<iframe id="playerId" src="" width="900" height="700"  allowfullscreen></iframe>
+		
+</div>	
+
+
+</body> 
+
+</html>

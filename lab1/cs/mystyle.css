@@ -1,0 +1,102 @@
+/*
+ * File name: mystyle.cs
+ * My on style
+ */
+ 
+ /*
+  * Background images 
+  */
+
+/* Background common parameters. */ 
+
+.bkgparams {
+		background-repeat: no-repeat;
+    	background-attachment: fixed;
+    	background-position: center; 
+    	background-size: cover;
+}   
+
+
+/* Background classes. */ 
+
+/* Generic backgrounds. */
+
+.istanbul {
+		background-image: url("../background/generic/istanbul.jpg");
+}   
+
+.cartoons {
+		background-image: url("../background/generic/cartoons.jpg");
+}   
+
+
+.meditation {
+		background-image: url("../background/generic/meditation.jpg");
+}   
+.waterdrops {
+		background-image: url("../background/generic/waterdrops.jpg");
+}   
+.oranges {
+		background-image: url("../background/generic/oranges.jpg");
+}   
+.sea {
+		background-image: url("../background/generic/sea.jpg");
+}   
+
+.leaves {
+		background-image: url("../background/generic/leaves.jpg");
+	}   	
+.leaves2 {
+		background-image: url("../background/generic/leaves2.jpg");
+}   		
+.frog {
+		background-image: url("../background/generic/frog.jpg");
+}   		
+
+/* Italy backgrounds. */
+.sicily {
+		background-image: url("../background/italy/sicily.jpg");
+}   
+
+.vespa {
+		background-image: url("../background/italy/vespa.jpg");
+}   
+
+.venice {
+		background-image: url("../background/italy/venice.jpg");
+}  
+
+.limoncello {
+		background-image: url("../background/italy/limoncello.jpg");
+} 
+
+.mergellina {
+		background-image: url("../background/italy/mergellina.jpg");
+} 
+
+.ravello {
+		background-image: url("../background/italy/ravello.jpg");
+} 
+
+.cinqueterre {
+		background-image: url("../background/italy/cinqueterre.jpg");
+} 
+
+/* Usa backgrounds. */
+.arizona {
+		background-image: url("../background/usa/arizona.jpg");
+} 
+
+.monumentvalley {
+		background-image: url("../background/usa/monumentvalley.jpg");
+} 
+
+.sedonatrail {
+		background-image: url("../background/usa/sedonatrail.jpg");
+} 
+
+/* Hawaii backgrounds. */
+
+.hawaii {
+		background-image: url("../background/hawaii/hawaii.jpg");
+} 

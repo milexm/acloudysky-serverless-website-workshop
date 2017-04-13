@@ -1,0 +1,204 @@
+<!--
+ * File name: slideshow.js
+ * Author: mmiele
+ * Initializes global variables, gets the user's album name. 
+ * Initializes the current album array based on the user's selection.
+ * Displays the image and caption.
+ -->
+ 
+ <!DOCTYPE html>
+<html>
+<head>
+	<title>Slide Show</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1"/>
+	<link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css"/>
+	<link rel="stylesheet" type="text/css" href="../cs/mystyle.css" />
+	<script type='text/javascript' src='../js/utilities.js'></script>
+	<script type='text/javascript' src='http://www.youtube.com/iframe_api'></script>
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"/></script>
+	
+	<script>
+	var production = false;
+	
+	var jsonObj;
+	var slideIndex = 2;
+	var picturesPath; 
+	var player;
+	
+	$(document).ready(function(){
+	
+		// Load the default album data. 
+		loadCsvFile('pictures/napoli/napoli.csv');
+	
+	});
+	
+	/*
+	 * Loads the CSV file that contains the album data.
+	 * Then transforms the data from CSV to JSON format.
+	 * Notice the function makes an XMLHttpRequest Ajax call. 
+	 * This is to allow the CSV file access that otherwise it would be
+	 * denied for security reasons.
+	 * Also the call is asynchronous but the function waits for the
+	 * response to proceed. 
+	 * Finally, the XMLHttpRequest can only be called from a web server local or remote.
+	 * in other words the protocol used is http and not file (that is not allowed).
+	 * For more information, see http://www.w3schools.com/xml/dom_httprequest.asp. 
+	 * Args 
+	 * file - The CSV file path 
+	 ***/
+	function loadCsvFile(file) {
+		
+		 webPath = getWebPath();
+		
+		// Build the file path.
+		filePath = webPath + file;
+		
+		// alert(window.location.pathname);
+		
+		// Create an XMLHttpRequest object
+	  	var xhttp = new XMLHttpRequest();
+	  	// Get the specified file making an asynchronous request.
+	  	xhttp.open("GET", filePath, true);
+	  	// Send the request to the server. 
+	  	xhttp.send();
+	  	
+	  	// Perform call back function after OK status is returned.
+	  	xhttp.onreadystatechange = function() {
+	    	if (this.readyState == 4 && this.status == 200) {
+	    		// Transform CSV to JSON format.
+	    		var jsonXfm =  csvJSON(this.responseText);
+	    		// Get the JSON object.
+	      	jsonObj = JSON.parse(jsonXfm);
+	      	
+	      	// Assign the background image for the selected album.
+	      	var bkgd = "bkgparams " + jsonObj[0].Background;
+   			$("body").removeAttr("class");
+    			$("body").addClass(bkgd);
+
+				// Assign selected album pictures path.
+   			picturesPath = "../pictures/" + jsonObj[0].Album + "/";
+   			
+   			// Reset the picture index. Notice that the location at index 1 
+   			// does not contain a picture. 
+   			slideIndex = 1;
+   			// Display the first picture that is at the location whose
+   			// index is 2 (1 + 1).
+   			showPicture(1);
+	    	}
+	  	};
+	  	
+	}
+	
+
+	/*
+    * Event handler that processes the selection change.
+    * Loads and processes the related CSV album file.  
+    ***/
+	function onChangeEventHandler(value){
+		// alert(value);
+		loadCsvFile(value);
+	 				
+	}
+	
+	/*
+	 * Page load event handler. 
+	 ***/
+	function onLoadEventHandler() {
+	
+		// TBD 
+	}
+	
+	/*
+	 * Transform the content of the passed CSV file into JSON format.
+	 * Args
+	 * csvData - The CSV data to transform.
+	 * Return
+	 * The data as a JSON string. 
+	 ***/
+	function csvJSON(csvData){
+	
+	  var lines=csvData.split("\n");
+	
+	  var result = [];
+	
+	  var headers=lines[0].split(",");
+	
+	  for(var i=1;i<lines.length;i++){
+	
+		  var obj = {};
+		  var currentline=lines[i].split(",");
+	
+		  for(var j=0;j<headers.length;j++){
+			  obj[headers[j]] = currentline[j];
+		  }
+	
+		  result.push(obj);
+	
+	  }
+	  
+	  // Return result as a JSON string. 
+	  return JSON.stringify(result); 
+	}      
+
+ 	/*** Picture control functions ***/
+  	
+	/*
+	 * Displays the image and caption.  
+	 *	The function wraps around either directions. 
+	***/
+	function showPicture(i) {
+	
+		// alert("called showPicture: " + jsonObj.length);
+		
+		var current = document.getElementById('pictureId');
+		var caption = document.getElementById('captionId');
+	   
+	   caption.innerHTML = "";
+	   
+	   slideIndex += i;	
+	   	
+	  	if (slideIndex > jsonObj.length - 2) {slideIndex = 2};
+  		if (slideIndex < 2) {slideIndex = jsonObj.length - 2};	  	
+	  	
+	  	current.src = picturesPath + jsonObj[slideIndex].Picture;
+      caption.innerHTML = jsonObj[slideIndex].Caption;
+      
+		// alert (jsonObj[slideIndex].Caption);
+		
+	  	current.style.display = "block";  
+	  	
+	}
+		
+</script>
+	
+</head>
+
+
+<body onload="onLoadEventHandler()">
+
+
+<div  class="w3-content w3-center" style="width:100%; padding-left:80px; padding-top:3%">
+
+  <div   class="w3-display-container w3-center"  style="width:800px;">
+  		<div class="w3-panel w3-text-shadow w3-amber w3-text-blue" style="font-weight: bold;" id="headerId">
+  			<a href="../examples.html" style="text-decoration: none; display:inline; float:left">&lt;&lt; Examples</a>		
+  			<select id="selectId" style="float:right" onchange="onChangeEventHandler(value)">
+  				<option value="pictures/napoli/napoli.csv">Napoli Album</option>
+  				<option value="pictures/italy/italy.csv">Italy Album</option>
+  				<option value="pictures/fun/fun.csv">Fun Album</option>
+			</select>
+  		</div>
+ 		<img id="pictureId" src="" style="width:800px; height:700px"/>
+ 		<div class="w3-panel w3-text-shadow w3-center w3-amber w3-text-red" style="font-weight: bold;" id="captionId"></div>
+  		<a class="w3-btn-floating w3-display-left" onclick="showPicture(-1)">&#10094;</a>
+  		<a class="w3-btn-floating w3-display-right" onclick="showPicture(1)">&#10095;</a>
+	</div>
+	
+</div>
+
+<script>
+
+</script>
+</body>
+
+</html>

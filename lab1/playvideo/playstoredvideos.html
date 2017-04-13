@@ -1,0 +1,101 @@
+<!DOCTYPE html> 
+<html> 
+<head>
+	<title>Play Video</title>
+   <link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
+   <link rel="stylesheet" type="text/css" href="../cs/mystyle.css" />
+ 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+ 
+<script>
+
+	// Audios associated with albums. 
+	var bestOfVivaldi = "../videos/spring_allegro.mp4";
+	var bigbuckbunny = "../videos/bigbuckbunny.mp4";
+	var hawaii = "../videos/hawaii.mp4";
+	var gloria = "../videos/gloria.mp4";
+	
+	
+	var videoSelection = 
+  	[
+		["bigbuckbunny", bigbuckbunny, "cartoons"], ["spring", bestOfVivaldi, "leaves2"],
+		["hawaii", hawaii, "hawaii"], ["gloria", gloria, "waterdrops"]
+	];	  	
+
+
+	var mySelect = document.getElementById('mySelect');
+    mySelect.selectedIndex = 0;
+   
+  	// Assign default video based on the default selection value.
+   	var videoPath =  bigbuckbunny;
+   
+   	document.getElementsByTagName('video')[0].src = videoPath;
+   
+	function onChangeEventHandler(value) {
+  		// alert(value);
+	  	var videoFound=false; 	
+	  	for (var i = 0; i < videoSelection.length; i++) {
+				if (value == videoSelection[i][0]) {
+					videoPath = videoSelection[i][1];
+					document.getElementsByTagName('video')[0].src = videoPath;
+					var bkImage = videoSelection[i][2];
+				   	var bkgd = "bkgparams " + bkImage;
+					$("body").removeAttr("class");
+			    	$("body").addClass(bkgd);
+					videoFound = true;		
+				}
+			} 
+		if (!videoFound) {
+			alert(value + " not found.");
+		}	
+	}
+	
+	function onLoadEventHandler() {
+	
+		// Assign default video. 
+	   	document.getElementsByTagName('video')[0].src = bigbuckbunny;
+	   	var mySelect = document.getElementById('mySelect');
+	   	mySelect.selectedIndex = 0;
+	   	// Set default audio volume. 
+	   	$('#videoId').get(0).volume = 0.1;
+	   	var bkImage = videoSelection[0][2];
+	   	var bkgd = "bkgparams " + bkImage;
+		$("body").removeAttr("class");
+    	$("body").addClass(bkgd);
+    
+	}
+	
+</script>
+</head>
+	
+<body  onload="onLoadEventHandler()"> 
+
+<div class="w3-content w3-center" style="width:100%; padding-left:80px; padding-top:5%">
+
+<div class="w3-panel w3-text-shadow w3-aqua w3-light-blue w3-text-blue" style="font-weight:bold;" id="captionId">
+
+	<div class="w3-text-shadow w3-light-blue w3-text-blue" style="font-weight:bold;" id="headerId">
+		<a href="../examples.html" style="text-decoration: none; display:inline; float:left">&lt;&lt; Examples</a>	
+		<select id="mySelect" style="float:right" onchange="onChangeEventHandler(this.value)">
+		  <option value="bigbuckbunny">bigbuckbunny</option>
+		  <option value="spring">spring</option>
+		  <option value="hawaii">hawaii</option>
+		  <option value="gloria">gloria</option>
+		</select>
+</div>		
+ 	</div>
+ 	
+  		<video id="videoId" width="100%" controls autoplay >
+	   		<source id="videoMp4"src="" type="video/mp4" />
+	   		<source id="videoWebm"src="" type="video/webm" />
+	   		<source id="videoOgg" src="" type="video/ogg" />
+	    	Your browser does not support HTML5 video.
+	    	<script>
+	        		var video = document.currentScript.parentElement;
+	        		video.volume = 0.1;
+	        </script>
+  		</video>	
+		
+	</div>
+	
+</body> 
+</html>

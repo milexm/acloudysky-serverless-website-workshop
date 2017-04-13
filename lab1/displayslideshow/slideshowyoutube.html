@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Slide Show</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1"/>
+	<link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css"/>
+	<link rel="stylesheet" type="text/css" href="../cs/mystyle.css" />
+	<script type='text/javascript' src='../js/utilities.js'></script>
+	<script type='text/javascript' src='http://www.youtube.com/iframe_api'></script>
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"/></script>
+	
+	<script>
+	var production = false;
+	
+	var jsonObj;
+	var slideIndex = 0;
+	var picturesPath; 
+	var player;
+	
+	$(document).ready(function(){
+	
+		loadCsvFile('pictures/napoli/napoli.csv');
+		
+		
+	});
+	
+	/*
+	 * Loads the CSV file that contains the album data.
+	 * Then transforms the data from CSV to JSON format.
+	 * Notice the function makes an XMLHttpRequest Ajax call. 
+	 * This is to allow the CSV file access that otherwise it would be
+	 * denied for security reasons.
+	 * Also the call is asynchronous but the function waits for the
+	 * response to proceed. 
+	 * Finally, the XMLHttpRequest can only be made from a web server local or remote.
+	 * in other words the protocol used is http and not file (that is not allowed).
+	 * For more information, see http://www.w3schools.com/xml/dom_httprequest.asp. 
+	 * Args 
+	 * file - The CSV file path 
+	 ***/
+	function loadCsvFile(file) {
+		
+		 webPath = getWebPath();
+		
+		// Build the file path.
+		filePath = webPath + file;
+		
+		// Create an XMLHttpRequest object
+	  	var xhttp = new XMLHttpRequest();
+	  	// Get the specified file making an asynchronous request.
+	  	xhttp.open("GET", filePath, true);
+	  	// Send the request to the server. 
+	  	xhttp.send();
+	  	
+	  	// Perform call back function after OK status is returned.
+	  	xhttp.onreadystatechange = function() {
+	    	if (this.readyState == 4 && this.status == 200) {
+	    		// Transform CSV to JSON format.
+	    		var jsonXfm =  csvJSON(this.responseText);
+	    		// Get the JSON object.
+	      	jsonObj = JSON.parse(jsonXfm);
+	      	
+	      	var bkgd = "bkgparams " + jsonObj[0].Background;
+   			$("body").removeAttr("class");
+    			$("body").addClass(bkgd);
+
+				// Assign album pictures path.
+   			picturesPath = "../pictures/" + jsonObj[0].Album + "/";
+  	
+  				// Assign default sound based on the default selection value.
+   			var soundPath =  jsonObj[0].Sound;
+   			var plyrId = document.getElementById('playerId'); 
+   			plyrId.src = soundPath;
+   			
+	    	}
+	  	};
+	  	
+	}
+	
+	
+
+	/*
+    * Event handler that processes the selection change.
+    * Loads and processed the related CSV album file.  
+    ***/
+	function onChangeEventHandler(value){
+		// alert(value);
+		loadCsvFile(value);
+		
+    	// Set the slider default value (position). 
+    	document.getElementById("sliderId").value = "10";
+   	
+   	
+	
+	}
+	
+	/*
+	 * Page load event handler. 
+	 ***/
+	function onLoadEventHandler() {
+	
+		// Display a picture every second. Start the loop. 
+  		var interval = self.setInterval(function(){showPicture()}, 3000);	
+	}
+	
+	/*
+	 * Transform the content of the passed CSV file into JSON format.
+	 * Args
+	 * csvData - The CSV data to transform.
+	 * Return
+	 * The data as a JSON string. 
+	 ***/
+	function csvJSON(csvData){
+	
+	  var lines=csvData.split("\n");
+	
+	  var result = [];
+	
+	  var headers=lines[0].split(",");
+	
+	  for(var i=1;i<lines.length;i++){
+	
+		  var obj = {};
+		  var currentline=lines[i].split(",");
+	
+		  for(var j=0;j<headers.length;j++){
+			  obj[headers[j]] = currentline[j];
+		  }
+	
+		  result.push(obj);
+	
+	  }
+	  
+	  // Return result as a JSON string. 
+	  return JSON.stringify(result); 
+	}      
+
+ 	/*** Picture control functions ***/
+  	
+	/*
+	 * Displays the picture and caption.  
+	***/
+	function showPicture() {
+	
+		// alert("called showPicture: " + jsonObj.length);
+		
+		var current = document.getElementById('pictureId');
+		var caption = document.getElementById('captionId');
+	   
+	   caption.innerHTML = "";
+	   
+	   slideIndex += 1;	
+	   	
+	  	if (slideIndex > jsonObj.length - 2) 
+	  		slideIndex = 1;
+	  	
+	  	current.src = picturesPath + jsonObj[slideIndex].Picture;
+      caption.innerHTML = jsonObj[slideIndex].Caption;
+      
+		// alert (jsonObj[slideIndex].Caption);
+		
+	  	current.style.display = "block";  
+	  	
+}
+
+/*** Player functions ***/
+	/*
+	 * Creates a player object and attach to it an onPlayerReady
+	 * event handler.
+	 * The Youtube API calls this function when the video player is ready.
+	 ***/
+	function onYouTubeIframeAPIReady(){
+		// alert("called onYouTubeIframeAPIReady");
+		// Create the player object from the iFrame in the page. 
+	 	player=new YT.Player('playerId',{events:{onReady:onPlayerReady}});
+	}
+    
+   /* OnReady event handler.
+    * Sets the initial player audio volume.
+    ***/
+   function onPlayerReady(event){
+    	// alert("called onPlayerReady");
+    	// player.mute();
+		// Set the player volume default value (0 to 100).    	
+    	player.setVolume(10);
+    	
+    }
+      
+  /* Slider change event handler.playerFound 
+  	 * Sets the youtube audio volume to the selected value.
+    * Args 
+    * value the new audio volume (from 0 to 100).
+    ***/ 
+	function onChangeAudioVolume(value)  {
+		// alert("selected volume " + value);
+		player.setVolume(value);
+	}	
+	
+</script>
+	
+</head>
+
+<body class="oranges" onload="onLoadEventHandler()">
+
+
+<div class="w3-content w3-center" style="width:100%; padding-left:80px; padding-top:0%">
+
+	
+	<div class="w3-panel  w3-pale-blue" style="font-weight:bold;">
+
+		<div class="w3-text-blue" style="font-weight:bold; font-size:11px;" id="headerId">
+			<a href="../examples.html" style="text-decoration: none; display:inline; float:left">&lt;&lt; Examples</a>	
+			<select id="selectId" style="float:right" onchange="onChangeEventHandler(value)">
+  				<option value="pictures/napoli/napoli.csv">Napoli Album</option>
+  				<option value="pictures/italy/italy.csv">Italy Album</option>
+  				<option value="pictures/fun/fun.csv">Fun Album</option>
+			</select>	
+		</div>	
+		
+ 	</div>
+ 	
+ 	<img id="pictureId" src="" style="width:900px; height:700px"/>
+
+	<br/>
+ 	
+ 	<div id="captionId" class="w3-pale-blue w3-text-red" style="font-weight:bold; text-align:center;"></div>
+ 	
+ 	<!-- Hide the Youtube control -->
+ 	<iframe id="playerId" style="display:none" src=""></iframe>
+		
+	<!-- Add a custom audio volume control -->
+	<input id="sliderId" type="range" min="0" max="100" step="10" onchange="onChangeAudioVolume(this.value)" value="10"></input>	
+
+</div>	
+
+</body>
+
+</html>
